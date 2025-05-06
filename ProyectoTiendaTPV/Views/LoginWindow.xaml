@@ -1,0 +1,76 @@
+﻿<Window x:Class="ProyectoTiendaTPV.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:ProyectoTiendaTPV.ViewModels"
+        mc:Ignorable="d"
+        Title="Iniciar Sesión - Mi Tienda TPV" 
+
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize" 
+        SizeToContent="Height"
+        Background="WhiteSmoke"
+        UseLayoutRounding="True">
+
+    <d:Window.DataContext>
+        <vm:LoginViewModel/>
+    </d:Window.DataContext>
+
+    <!-- Contenedor principal -->
+    <StackPanel Margin="25">
+
+        <TextBlock Text="Bienvenido" 
+                   FontSize="22" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,20"/>
+
+        <TextBlock Text="Usuario:" 
+                   FontWeight="SemiBold"/>
+        <TextBox x:Name="UsernameTextBox" 
+                 Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+                 Margin="0,2,0,10" 
+                 FontSize="14" 
+                 Padding="5"/>
+
+        <TextBlock Text="Contraseña:" 
+                   FontWeight="SemiBold"/>
+        <PasswordBox x:Name="UserPasswordBox" 
+                     Margin="0,2,0,10" 
+                     FontSize="14" 
+                     Padding="5"/>
+
+        <!-- Área para Mensajes de Error -->
+        <TextBlock Text="{Binding ErrorMessage}" 
+                   Foreground="Red" 
+                   TextWrapping="Wrap" 
+                   MinHeight="30" 
+                   Margin="0,5,0,5"/>
+
+        <!-- Botones de Acción -->
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Center" 
+                    Margin="0,15,0,0">
+
+            <Button Content="Entrar"
+                    Command="{Binding LoginCommand}"
+                    CommandParameter="{Binding ElementName=UserPasswordBox}"
+                    Width="120" 
+                    Margin="5" 
+                    IsDefault="True" 
+                    FontSize="14" 
+                    Padding="10,5"/>
+
+            <Button Content="Cancelar"
+                    Command="{Binding CancelCommand}"
+                    Width="120" 
+                    Margin="5" 
+                    IsCancel="True" 
+                    FontSize="14" 
+                    Padding="10,5"/>
+        </StackPanel>
+
+    </StackPanel>
+
+</Window>

@@ -1,0 +1,244 @@
+﻿<UserControl x:Class="ProyectoTiendaTPV.Views.ProductManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ProyectoTiendaTPV.Views"
+             xmlns:vm="clr-namespace:ProyectoTiendaTPV.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:ProductManagementViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="600" d:DesignWidth="800"
+             Background="WhiteSmoke">
+
+    <TabControl Margin="5">
+
+        <!-- PESTAÑA 1: PRODUCTOS -->
+        <TabItem Header="Productos">
+            <Grid Margin="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Título -->
+                    <RowDefinition Height="*"/>
+                    <!-- DataGrid -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Botones -->
+                </Grid.RowDefinitions>
+
+                <!-- DataGrid Productos Completo -->
+                <DataGrid Grid.Row="1" Grid.RowSpan="1" Margin="0,10,0,0"
+                          ItemsSource="{Binding Products}"
+                          SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                          AutoGenerateColumns="False" 
+                          IsReadOnly="True" 
+                          CanUserAddRows="False" 
+                          SelectionMode="Single"
+                          VerticalScrollBarVisibility="Auto" 
+                          HorizontalScrollBarVisibility="Auto" 
+                          FontSize="14">
+                    <DataGrid.Columns>
+                        <!-- Columna ID -->
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+
+                        <!-- Columna Imagen -->
+                        <DataGridTemplateColumn Header="Imagen" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding ImagePath, Converter={StaticResource ImagePathConverter}}" 
+                                           Height="50" 
+                                           Stretch="Uniform" 
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- Columna Nombre Producto -->
+                        <DataGridTextColumn Header="Nombre Producto" Binding="{Binding Name}" Width="*"/>
+
+                        <!-- Columna Precio -->
+                        <DataGridTextColumn Header="Precio (€)" Binding="{Binding Price, StringFormat=C, ConverterCulture=es-ES}" Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Columna Código de Barras -->
+                        <DataGridTextColumn Header="Cód. Barras" Binding="{Binding Barcode}" Width="120"/>
+
+                        <!-- Columna Subfamilia -->
+                        <DataGridTextColumn Header="Subfamilia" Binding="{Binding Subfamily.Name}" Width="150"/>
+
+                        <!-- Columna Familia -->
+                        <DataGridTextColumn Header="Familia" Binding="{Binding Subfamily.Family.Name}" Width="150"/>
+
+                        <!-- Columna Stock -->
+                        <DataGridTextColumn Header="Stock" Binding="{Binding StockQuantity}" Width="80">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+                <!-- Botones Productos -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="Recargar" Command="{Binding ReLoadProductsCommand}" Width="100" Margin="5"/>
+                    <Button Content="Añadir" Command="{Binding AddProductCommand}" Width="100" Margin="5"/>
+                    <Button Content="Editar" Command="{Binding EditProductCommand}" Width="100" Margin="5"/>
+                    <Button Content="Eliminar" Command="{Binding DeleteProductCommand}" Width="100" Margin="5" Background="#FFE08282"/>
+                </StackPanel>
+
+                <!-- Indicador de Carga -->
+                <Grid Grid.Row="0" Grid.RowSpan="3" Background="#80FFFFFF" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
+                    <TextBlock Text="Cargando..." FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                </Grid>
+            </Grid>
+        </TabItem>
+
+        <!-- PESTAÑA 2: FAMILIAS  -->
+        <TabItem Header="Familias">
+            <Grid Margin="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <!-- DataGrid -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Botones -->
+                </Grid.RowDefinitions>
+
+                <DataGrid Grid.Row="0" Margin="0,10,0,0"
+                          ItemsSource="{Binding Families}"
+                          SelectedItem="{Binding SelectedFamily, Mode=TwoWay}"
+                          AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" SelectionMode="Single"
+                          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontSize="14">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                        <DataGridTextColumn Header="Nombre Familia" Binding="{Binding Name}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="Recargar" Command="{Binding ReLoadFamilysCommand}" Width="100" Margin="5"/>
+                    <Button Content="Añadir" Command="{Binding AddFamilyCommand}" Width="100" Margin="5"/>
+                    <Button Content="Editar" Command="{Binding EditFamilyCommand}" Width="100" Margin="5"/>
+                    <Button Content="Eliminar" Command="{Binding DeleteFamilyCommand}" Width="100" Margin="5" Background="#FFE08282"/>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+
+        <!-- PESTAÑA 3: SUBFAMILIAS -->
+        <TabItem Header="Subfamilias">
+            <Grid Margin="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <!-- DataGrid -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Botones -->
+                </Grid.RowDefinitions>
+
+                <DataGrid Grid.Row="0" Margin="0,10,0,0"
+                          ItemsSource="{Binding Subfamilies}"
+                          SelectedItem="{Binding SelectedSubfamily, Mode=TwoWay}"
+                          AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" SelectionMode="Single"
+                          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontSize="14">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                        <DataGridTextColumn Header="Nombre Subfamilia" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Familia Padre" Binding="{Binding Family.Name}" Width="200"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="Recargar" Command="{Binding ReLoadSubfamilysCommand}" Width="100" Margin="5"/>
+                    <Button Content="Añadir" Command="{Binding AddSubfamilyCommand}" Width="100" Margin="5"/>
+                    <Button Content="Editar" Command="{Binding EditSubfamilyCommand}" Width="100" Margin="5"/>
+                    <Button Content="Eliminar" Command="{Binding DeleteSubfamilyCommand}" Width="100" Margin="5" Background="#FFE08282"/>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        <!-- PESTAÑA 4: HISTORIAL VENTAS -->
+        <TabItem Header="Historial Ventas">
+            <Grid Margin="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <!-- Lista Tickets -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Separador -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Título Detalles -->
+                    <RowDefinition Height="150"/>
+                    <!-- Detalle Items  -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Botones -->
+                </Grid.RowDefinitions>
+
+                <!-- Lista Principal de Tickets -->
+                <DataGrid Grid.Row="0" Margin="0,10,0,0"
+                          ItemsSource="{Binding Tickets}"
+                          SelectedItem="{Binding SelectedTicket, Mode=TwoWay}"
+                          AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" SelectionMode="Single"
+                          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontSize="14">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID Ticket" Binding="{Binding Id}" Width="80"/>
+                        <DataGridTextColumn Header="Número Ticket" Binding="{Binding TicketNumber}" Width="*"/>
+                        <DataGridTextColumn Header="Fecha y Hora" Binding="{Binding DateTimeCreated, StringFormat='dd/MM/yyyy HH:mm:ss'}" Width="160"/>
+                        <DataGridTextColumn Header="Total (€)" Binding="{Binding TotalAmount, StringFormat=C, ConverterCulture=es-ES}" Width="110">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Separator Grid.Row="1" Margin="0,10"/>
+
+                <TextBlock Grid.Row="2" Text="Detalles del Ticket Seleccionado:" FontSize="16" FontWeight="SemiBold" Margin="0,5,0,5"/>
+
+                <!-- Detalles de los Items del Ticket Seleccionado -->
+                <DataGrid Grid.Row="3" Margin="0,5,0,0"
+                          ItemsSource="{Binding SelectedTicketItems}"
+                          AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontSize="13">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Producto" Binding="{Binding Product.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Cant." Binding="{Binding Quantity}" Width="50"/>
+                        <DataGridTextColumn Header="Precio Unit. (€)" Binding="{Binding UnitPrice, StringFormat=C, ConverterCulture=es-ES}" Width="110">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Subtotal (€)" Binding="{Binding Path=., Converter={StaticResource TicketItemSubtotalConverter}}" Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Botones para la Pestaña Historial -->
+                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="Recargar" Command="{Binding ReLoadLoadTicketsCommand}" Width="100" Margin="5"/>
+
+                
+                </StackPanel>
+
+                
+                <Grid Grid.Row="0" Grid.RowSpan="5" Background="#80FFFFFF" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
+                    <TextBlock Text="Cargando..." FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                </Grid>
+            </Grid>
+        </TabItem>
+    </TabControl>
+
+</UserControl>

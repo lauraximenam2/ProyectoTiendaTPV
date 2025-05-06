@@ -1,0 +1,265 @@
+﻿<UserControl x:Class="ProyectoTiendaTPV.Views.SalesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ProyectoTiendaTPV.Views"
+             xmlns:vm="clr-namespace:ProyectoTiendaTPV.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:SalesViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Background="WhiteSmoke">
+
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <!-- Productos -->
+            <ColumnDefinition Width="*"/>
+            <!-- Ticket -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Columna 0: Selección de Productos -->
+        <Border Grid.Column="0" Background="White" CornerRadius="5" Margin="0,0,5,0">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Productos Disponibles" FontSize="18" FontWeight="SemiBold" Margin="10"/>
+
+                <!-- SECCIÓN DE FILTROS -->
+                <StackPanel DockPanel.Dock="Top" Margin="10,0,10,10">
+                    <!-- Filtro por Texto -->
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Buscar:" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <!-- Filtro por Familia -->
+                    <TextBlock Text="Familias:" FontWeight="SemiBold"/>
+                    <ItemsControl ItemsSource="{Binding AllFamilies}" Margin="0,2,0,5">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ToggleButton Content="{Binding Name}" 
+                          Command="{Binding DataContext.SelectFamilyFilterCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                          CommandParameter="{Binding}">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="ToggleButton">
+                                            
+                                            <Setter Property="Margin" Value="2"/>
+                                            <Setter Property="Padding" Value="8,3"/>
+                                            <Setter Property="MinWidth" Value="70"/>
+                                            <Style.Triggers>
+                                                <!-- Trigger que se activa cuando el item actual ES el seleccionado -->
+                                                <DataTrigger Value="True">
+                                                    <DataTrigger.Binding>
+                                                        <!-- Compara el item actual con el SelectedFamilyFilter del DataContext padre -->
+                                                        <MultiBinding Converter="{StaticResource EqualityConverter}">
+                                                            <Binding />
+                                                            <!-- El DataContext actual (la Family de este botón) -->
+                                                            <Binding Path="DataContext.SelectedFamilyFilter" 
+                                                 RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}"/>
+                                                        </MultiBinding>
+                                                    </DataTrigger.Binding>
+                                                    <!-- Si son iguales el convertidor devuelve True -->
+                                                    <Setter Property="IsChecked" Value="True"/>
+                                                   
+                                                    <Setter Property="Background" Value="DodgerBlue"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Filtro por Subfamilia -->
+                    <TextBlock Text="Subfamilias:" FontWeight="SemiBold" Margin="0,5,0,0"/>
+                    <ItemsControl ItemsSource="{Binding FilterableSubfamilies}" Margin="0,2,0,5">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ToggleButton Content="{Binding Name}" 
+                          Command="{Binding DataContext.SelectSubfamilyFilterCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                          CommandParameter="{Binding}">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="ToggleButton">
+                                            <Setter Property="Margin" Value="2"/>
+                                            <Setter Property="Padding" Value="8,3"/>
+                                            <Setter Property="MinWidth" Value="70"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Value="True">
+                                                    <DataTrigger.Binding>
+                                                        <MultiBinding Converter="{StaticResource EqualityConverter}">
+                                                            <Binding />
+                                                            <!-- La Subfamily actual -->
+                                                            <Binding Path="DataContext.SelectedSubfamilyFilter" 
+                                                  RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}"/>
+                                                        </MultiBinding>
+                                                    </DataTrigger.Binding>
+                                                    <Setter Property="IsChecked" Value="True"/>
+                                                    <Setter Property="Background" Value="SkyBlue"/>
+                                                    
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Botón para limpiar filtros -->
+                    <Button Content="Mostrar Todos" Command="{Binding ClearCategoryFiltersCommand}" HorizontalAlignment="Left" Margin="2,5,0,0"
+                            Visibility="{Binding IsAnyCategoryFilterActive, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                    <Separator Margin="0,10"/>
+                </StackPanel>
+                
+
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
+                    
+                    <ItemsControl ItemsSource="{Binding FilteredProducts}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" ItemWidth="120" ItemHeight="120"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.AddProductToTicketCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                    CommandParameter="{Binding}"
+                                    Margin="5" Padding="5" Background="LightBlue" MaxWidth="110" MaxHeight="110"
+                                    VerticalContentAlignment="Top" HorizontalContentAlignment="Center"
+                                    IsEnabled="{Binding StockQuantity, Converter={StaticResource StockToBooleanConverter}}">
+                                    
+
+                                    <!-- Contenido del botón (StackPanel con Imagen, Nombre, Precio) -->
+                                    <StackPanel>
+                                        <Image Source="{Binding ImagePath, Converter={StaticResource ImagePathConverter}}" Height="60" Stretch="Uniform" Margin="0,0,0,5"/>
+                                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap" TextAlignment="Center" FontSize="12" MaxHeight="30" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Price, StringFormat=C, ConverterCulture=es-ES}" TextAlignment="Center" FontWeight="SemiBold"/>
+                                                                            
+                                       
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding StockQuantity, Converter={StaticResource StockToBooleanConverter}}" Value="False">
+                                                        <Setter Property="Opacity" Value="0.5"/>
+                                                        
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                    </StackPanel>
+
+                                    
+                                    <Button.ToolTip>
+                                        <ToolTip>
+                                            <TextBlock Text="{Binding StockQuantity, StringFormat='Stock Disponible: {0}'}"/>
+                                        </ToolTip>
+                                    </Button.ToolTip>
+
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <!-- Columna 1: Ticket Actual -->
+        <Border Grid.Column="1" Background="White" CornerRadius="5" Margin="5,0,0,0" BorderBrush="LightGray" BorderThickness="1">
+            <DockPanel LastChildFill="True">
+                <TextBlock DockPanel.Dock="Top" Text="Ticket Actual" FontSize="18" FontWeight="SemiBold" Margin="10"/>
+
+                <!-- Sección de Total y Pagar (Abajo) -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="10">
+                    <Separator Margin="0,5"/>
+                    <Grid Margin="0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="TOTAL:" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="{Binding TotalAmount, StringFormat=C, ConverterCulture=es-ES}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+                    <Button Content="PAGAR" Command="{Binding FinalizeSaleCommand}" Height="50" Background="ForestGreen" Foreground="White" FontWeight="Bold" FontSize="18" Margin="0,10,0,0"/>
+                    <Button Content="Cancelar Venta" Command="{Binding CancelSaleCommand}" Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <!-- Lista de Items del Ticket (Centro) -->
+                <ListView ItemsSource="{Binding CurrentTicketItems}" Margin="10,0,10,0" FontSize="13"
+                          AlternationCount="2">
+                    
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Producto" Width="140" DisplayMemberBinding="{Binding ProductName}"/>
+
+                            <GridViewColumn Header="Cant." Width="90">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Command="{Binding DataContext.DecrementQuantityCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                    CommandParameter="{Binding}"
+                                                    Content="-" Width="20" Height="20" Margin="0,0,3,0" Padding="0" FontSize="12"/>
+                                            <TextBlock Text="{Binding Quantity}" Width="25" TextAlignment="Center" VerticalAlignment="Center"/>
+                                            <Button Command="{Binding DataContext.IncrementQuantityCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                    CommandParameter="{Binding}"
+                                                    Content="+" Width="20" Height="20" Margin="3,0,0,0" Padding="0" FontSize="12"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <GridViewColumn Header="Total (€)" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ItemTotal, StringFormat=C, ConverterCulture=es-ES}" HorizontalAlignment="Right"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <GridViewColumn Width="35">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding DataContext.RemoveItemFromTicketCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                 CommandParameter="{Binding}"
+                                                 Content="X" Width="25" Height="25" Padding="0"
+                                                 Foreground="White" Background="IndianRed" FontSize="12" FontWeight="Bold"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+            </DockPanel>
+        </Border>
+
+       
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" Background="#80FFFFFF" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
+            <TextBlock Text="Cargando Datos..." FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold"/>
+        </Grid>
+
+    </Grid>
+</UserControl>
