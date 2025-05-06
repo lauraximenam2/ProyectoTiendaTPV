@@ -114,7 +114,8 @@ ProyectoTiendaTPV
 |-- README.md # Este archivo
 
 ## Usuarios 
-(`admin`/`admin123`, `vendedor`/`venta123`)
+Administrador (`admin`/`admin123`
+Vendedor (`vendedor`/`admin123`)
 
 ## Posibles Mejoras Futuras
 
