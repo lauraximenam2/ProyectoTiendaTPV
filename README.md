@@ -79,12 +79,16 @@ ProyectoTiendaTPV
 | |-- ImagePathToBitmapConverter.cs
 | |-- StockToBooleanConverter.cs
 | |-- TicketItemSubtotalConverter.cs 
+
 |-- Data/ # Clases relacionadas con EF Core
 | |-- AppDbContext.cs
+
 |-- Enums/ # Enumeraciones
 | |-- UserRole.cs
+
 |-- Images/ # (En directorio de salida bin/Debug) Carpeta donde se copian las imágenes
 |-- Migrations/ # Archivos generados por EF Core Migrations
+
 |-- Models/ # Clases de entidad (POCOs)
 | |-- Family.cs
 | |-- Product.cs
@@ -93,6 +97,7 @@ ProyectoTiendaTPV
 | |-- TicketItem.cs
 | |-- TicketLineItem.cs (Modelo específico para la UI de ventas)
 | |-- User.cs
+
 |-- ViewModels/ # Lógica de presentación y estado de la UI
 | |-- AddEditFamilyViewModel.cs
 | |-- AddEditProductViewModel.cs
@@ -101,6 +106,7 @@ ProyectoTiendaTPV
 | |-- MainViewModel.cs
 | |-- ProductManagementViewModel.cs
 | |-- SalesViewModel.cs
+
 |-- Views/ # Archivos XAML
 | |-- AddEditFamilyWindow.xaml (.cs)
 | |-- AddEditProductWindow.xaml (.cs)
@@ -109,11 +115,24 @@ ProyectoTiendaTPV
 | |-- MainWindow.xaml (.cs)
 | |-- ProductManagementView.xaml (.cs)
 | |-- SalesView.xaml (.cs)
+
 |-- App.xaml (.cs) # Punto de entrada y recursos globales
 |-- ProyectoTiendaTPV.csproj # Archivo de proyecto
 |-- README.md # Este archivo
 
-## Usuarios 
+## Cómo Empezar
+
+1.  **Clonar el Repositorio:** 
+2.  **Abrir con Visual Studio:** Abre el archivo `.sln` con Visual Studio 2022 o superior 
+3.  **Configurar Base de Datos:**
+    *   Asegúrate de tener una instancia de SQL Server (LocalDB).
+    *   Verifica/ajusta la cadena de conexión en `Data/AppDbContext.cs` (método `OnConfiguring`). Por defecto usa LocalDB y crea `ProyectoTiendaTPV_DB`.
+    *   Abre la **Consola del Administrador de Paquetes** (Herramientas > Admin. Paquetes NuGet > Consola...).
+    *   Ejecuta `Update-Database` para crear la base de datos y aplicar las migraciones. Esto también debería insertar los usuarios de ejemplo (`admin`/`admin123`, `vendedor`/`admin123`)
+    *   *(Opcional)* Ejecuta el script SQL de datos de ejemplo (`add_product.sql` - *Deberías crear este archivo y pegar el script que he adjuntado en el repo*) para poblar Familias, Subfamilias y Productos.
+4.  **Ejecutar la Aplicación:** Presiona F5 o el botón de inicio en Visual Studio.
+    
+## Usuarios de acceso
 Administrador (`admin`/`admin123`
 Vendedor (`vendedor`/`admin123`)
 
