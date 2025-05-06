@@ -1,9 +1,9 @@
-﻿-- Asegúrate de estar usando la base de datos correcta
+--Script que hemos ejecutamos para añadir datos inicialmente a nuestra BD, insertamos familias, subfamilias y productos
 USE ProyectoTiendaTPV_DB;
 GO
 
 PRINT 'Limpiando datos existentes...';
--- Eliminar en orden inverso a las dependencias para evitar errores de FK:
+-- Eliminamos en orden inverso a las dependencias para evitar errores de FK:
 DELETE FROM dbo.TicketItems;
 DELETE FROM dbo.Tickets;
 DELETE FROM dbo.Products;
@@ -11,7 +11,7 @@ DELETE FROM dbo.Subfamilies;
 DELETE FROM dbo.Families;
 GO
 
--- (Opcional) Reiniciar los contadores de ID
+-- Reiniciamos los contadores de ID
 PRINT 'Reiniciando contadores de ID...';
 DBCC CHECKIDENT ('dbo.TicketItems', RESEED, 0);
 DBCC CHECKIDENT ('dbo.Tickets', RESEED, 0);
@@ -20,14 +20,14 @@ DBCC CHECKIDENT ('dbo.Subfamilies', RESEED, 0);
 DBCC CHECKIDENT ('dbo.Families', RESEED, 0);
 GO
 
--- Insertar Familias (10)
+-- Insertamos Familias (10)
 PRINT 'Insertando Familias...';
 INSERT INTO Families (Name) VALUES
 ('Rostro'), ('Ojos'), ('Labios'), ('Uñas'), ('Cuidado Facial'),
 ('Cuidado Corporal'), ('Brochas y Herramientas'), ('Perfumes'), ('Accesorios'), ('Sets y Kits');
 GO
 
--- Insertar Subfamilias (21 - Añadida Herramientas Varias)
+-- Insertamos Subfamilias (21 )
 PRINT 'Insertando Subfamilias...';
 DECLARE @fRostro INT = (SELECT Id FROM Families WHERE Name = 'Rostro');
 DECLARE @fOjos INT = (SELECT Id FROM Families WHERE Name = 'Ojos');
@@ -48,10 +48,10 @@ INSERT INTO Subfamilies (Name, FamilyId) VALUES
 ('Limpiadores Faciales', @fCuidadoFacial), ('Hidratantes Faciales', @fCuidadoFacial), ('Mascarillas Faciales', @fCuidadoFacial),
 ('Hidratantes Corporales', @fCuidadoCorporal),
 ('Brochas Rostro', @fHerramientas), ('Brochas Ojos', @fHerramientas),
-('Herramientas Varias', @fHerramientas); -- Subfamilia añadida
+('Herramientas Varias', @fHerramientas); 
 GO
 
--- Insertar Productos (50) - Con datos ficticios NO NULL para Barcode, Description, StockQuantity e ImagePath='algodon.jpg'
+-- Insertamos Productos (50) 
 PRINT 'Insertando Productos...';
 DECLARE @sfBases INT = (SELECT Id FROM Subfamilies WHERE Name = 'Bases de Maquillaje');
 DECLARE @sfCorrectores INT = (SELECT Id FROM Subfamilies WHERE Name = 'Correctores');
@@ -73,7 +73,7 @@ DECLARE @sfMascarillas INT = (SELECT Id FROM Subfamilies WHERE Name = 'Mascarill
 DECLARE @sfHidratantesCorp INT = (SELECT Id FROM Subfamilies WHERE Name = 'Hidratantes Corporales');
 DECLARE @sfBrochasRostro INT = (SELECT Id FROM Subfamilies WHERE Name = 'Brochas Rostro');
 DECLARE @sfBrochasOjos INT = (SELECT Id FROM Subfamilies WHERE Name = 'Brochas Ojos');
-DECLARE @sfHerramientasVarias INT = (SELECT Id FROM Subfamilies WHERE Name = 'Herramientas Varias'); -- Variable declarada
+DECLARE @sfHerramientasVarias INT = (SELECT Id FROM Subfamilies WHERE Name = 'Herramientas Varias'); 
 
 INSERT INTO Products (Name, Description, Price, StockQuantity, Barcode, ImagePath, SubfamilyId) VALUES
 -- Rostro
@@ -130,9 +130,9 @@ INSERT INTO Products (Name, Description, Price, StockQuantity, Barcode, ImagePat
 ('Brocha Colorete Biselada', 'Define pómulos.', 11.80, 90, '841111100045', 'algodon.jpg', @sfBrochasRostro),
 ('Set 5 Brochas Esenciales Ojos', 'Difuminar, aplicar, delinear.', 19.95, 100, '841111100046', 'algodon.jpg', @sfBrochasOjos),
 ('Brocha Difuminar Sombra Cónica', 'Acabado profesional.', 7.50, 150, '841111100047', 'algodon.jpg', @sfBrochasOjos),
-('Esponja Maquillaje Silicona', 'No absorbe producto.', 6.00, 300, '841111100048', 'algodon.jpg', @sfHerramientasVarias), -- Usando la variable correcta
-('Pinzas Depilar Cangrejo', 'Agarre firme.', 4.50, 200, '841111100049', 'algodon.jpg', @sfHerramientasVarias), -- Usando la variable correcta
-('Rizador Pestañas Térmico', 'Curva duradera con calor.', 15.50, 180, '841111100050', 'algodon.jpg', @sfHerramientasVarias); -- Usando la variable correcta
+('Esponja Maquillaje Silicona', 'No absorbe producto.', 6.00, 300, '841111100048', 'algodon.jpg', @sfHerramientasVarias),
+('Pinzas Depilar Cangrejo', 'Agarre firme.', 4.50, 200, '841111100049', 'algodon.jpg', @sfHerramientasVarias), 
+('Rizador Pestañas Térmico', 'Curva duradera con calor.', 15.50, 180, '841111100050', 'algodon.jpg', @sfHerramientasVarias); 
 GO
 
 PRINT 'Datos de ejemplo insertados.';
